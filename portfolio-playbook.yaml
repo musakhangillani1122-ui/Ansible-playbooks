@@ -1,0 +1,36 @@
+---
+- name: Deploy my portfolio website
+  hosts: app
+  become: true
+  
+
+  tasks:
+  - name: Install nginx
+    ansible.builtin.apt:
+       name: nginx
+       state: present
+       update_cache: yes
+
+  - name: Clone portfolio from Github
+    git:
+      repo: https://github.com/musakhangillani1122-ui/My-Portfolio.git
+      dest: /opt/My-Portfolio
+      version: main
+
+  - name: Remove nginx default page
+    file:
+      path: /var/www/html/index.nginx-debian.html
+      state: absent
+
+  - name: copy portfolio files to nginx folder
+    copy:
+      src: /opt/My-Portfolio/Portfolio
+      dest: /var/www/html
+      remote_src: true
+
+  - name: make sure nginx is running
+    service:
+      name: nginx
+      state: started
+      enabled: true
+

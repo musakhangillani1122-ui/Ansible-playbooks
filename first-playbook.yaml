@@ -1,0 +1,19 @@
+---
+- hosts: app
+  become: true
+  tasks:
+    - name: install Docker
+      ansible.builtin.apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+    - name: Start Docker and enable ob boot
+      service:
+        name: docker
+        state: started
+        enabled: true
+    - name: let ubuntu user run Docker without sudo
+      user:
+        name: ubuntu
+        groups: docker
+        append: true
